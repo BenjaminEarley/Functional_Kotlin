@@ -1,3 +1,5 @@
+fun fac(n: Int): Int = if (n < 1) 1 else n * fac(n - 1)
+
 //Exercise 2.1
 fun fib(n: Int): Int = if (n < 2) n else fib(n - 2) + fib(n - 1)
 
