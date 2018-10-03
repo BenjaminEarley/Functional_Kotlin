@@ -1,31 +1,34 @@
 fun main(args: Array<String>) {
     println(fib(2))
-    println(isSorted(arrayOf(1, 2, 3, 2)) { a, b ->
-        a <= b
-    })
+    println(isSorted(arrayOf(1, 2, 3, 2)) { a, b -> a <= b })
+    val primes = arrayOf(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97)
+    println(binarySearch(primes.copyOf(), 73))
+    val numbers = arrayOf(70, 46, 51, 66, 9, 75, 43)
+    println(selectionSort(numbers.copyOf()).contentToString())
+    println(insertionSort(numbers.copyOf()).contentToString())
+    println(insertionSort2(numbers.copyOf().iterator()).asSequence().toList().toString())
 }
 
-//Exercise 2.1
-fun fib(n: Int): Int = if (n < 2) n else fib(n - 2) + fib(n - 1)
 
-//Exercise 2.2
-fun <A> isSorted(a: Array<A>, ordered: (A, A) -> Boolean): Boolean {
-    tailrec fun loop(n: Int): Boolean =
-        if (n >= a.size) true
-        else if (!ordered(a[n - 1], a[n])) false
-        else loop(n + 1)
-    return loop(1)
-}
 
-fun <A, B, C> partial1(a: A, f: (A, B) -> C): (B) -> C = { b -> f(a, b) }
 
-//Exercise 2.3
-fun <A, B, C> curry(f: (A, B) -> C): (A) -> (B) -> C = { a -> { b -> f(a, b) } }
 
-//Exercise 2.4
-fun <A, B, C> uncurry(f: (A) -> (B) -> C): (A, B) -> C = { a, b -> f(a)(b) }
 
-//Exercise 2.5
-fun <A, B, C> compose(f: (B) -> C, g: (A) -> B): (A) -> C = { a -> f(g(a)) }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
