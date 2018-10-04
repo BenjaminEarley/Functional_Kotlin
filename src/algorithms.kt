@@ -1,3 +1,5 @@
+import ConsList.Cons
+import ConsList.Nil
 import ZipperList.Cell
 import ZipperList.Empty
 
@@ -100,3 +102,43 @@ tailrec fun <A> helper(array: Array<A>, list: ZipperList<A>): Array<A> =
             helper(array + list.head, list.tail)
         }
     }
+
+sealed class ConsList<out A> {
+    object Nil : ConsList<Nothing>()
+    class Cons<A>(val head: A, val tail: ConsList<A>) : ConsList<A>()
+}
+
+fun <A> Iterator<A>.toConsList(): ConsList<A>? {
+    val cons: ConsList<A> = this.asSequence().toList().foldRight(Nil, ::Cons)
+
+    return Nil
+}
+
+fun mergeSort(list: List<Int>): List<Int> {
+
+    fun List<Int>.split(i: Int): Pair<List<Int>, List<Int>> = Pair(this.slice(0 until i), this.slice(i until this.size))
+
+    fun merge(left: List<Int>, right: List<Int>): List<Int> =
+        when {
+            left.isEmpty() -> right
+            right.isEmpty() -> left
+            else -> {
+                val leftHead = left.first()
+                val rightHead = right.first()
+                if (leftHead < rightHead) leftHead + merge(left.take(1), right)
+                else rightHead + merge(left, right.take(1))
+            }
+        }
+
+    fun sort(l: List<Int>): List<Int> {
+        val n = l.size / 2
+        return if (n == 0) list
+        else {
+            val (left, right) = list.split(n)
+            merge(mergeSort(left), mergeSort(right))
+
+        }
+    }
+
+    return sort(list)
+}
