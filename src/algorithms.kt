@@ -141,10 +141,25 @@ fun <A> ConsList<A>.size(): Int {
 }
 
 fun <A> ConsList<A>.split(n: Int): Pair<ConsList<A>, ConsList<A>> {
-    fun List<A>.split(i: Int): Pair<List<A>, List<A>> = Pair(this.slice(0 until i), this.slice(i until this.size))
-    return this.toList()?.split(n).let { Pair(it?.first?.toConsList() ?: Nil, it?.second?.toConsList() ?: Nil) }
-}
+    var count = n - 1
+    var right: ConsList<A> = Nil
+    val left: ConsList<A>
 
+    fun loopLeft(consList: ConsList<A>): ConsList<A> = when (consList) {
+        ConsList.Nil -> Nil
+        is ConsList.Cons -> {
+            if (count == 0) {
+                right = consList.tail
+                Cons(consList.head, Nil)
+            } else {
+                count -= 1
+                Cons(consList.head, loopLeft(consList.tail))
+            }
+        }
+    }
+    left = loopLeft(this)
+    return Pair(left, right)
+}
 
 fun mergeSort(list: ConsList<Int>): ConsList<Int> {
 
