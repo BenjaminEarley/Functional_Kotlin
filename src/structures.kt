@@ -9,50 +9,49 @@ sealed class ConsList<out A> {
         override fun toString(): String = "Nil"
     }
 
-    class Cons<A>(val head: A, val tail: ConsList<A>) : ConsList<A>() {
-        override fun toString(): String {
-            fun loop(consList: ConsList<A>): String = when (consList) {
-                Nil -> "Nil"
-                is Cons -> "${consList.head}, " + loop(consList.tail)
-            }
-            return "[${loop(this)}]"
-        }
+    class Cons<A> internal constructor(val head: A, val tail: ConsList<A>) : ConsList<A>() {
+        override fun toString(): String = "[${this.foldLeft("") { acc, value -> "$acc$value, " }}Nil]"
     }
+
+    inline fun <A> nil(): ConsList<A> = ConsList.Nil
+    fun <A> cons(head: A, tail: ConsList<A>): ConsList<A> = ConsList.Cons(head, tail)
+}
+
+fun <A> Cons<A>.reduce(f: (A, A) -> A): A = tail.fold(this.head) { acc, value -> f(acc, value) }
+
+fun <A : B, B> ConsList<A>.fold(z: B, f: (B, B) -> B): B = foldLeft(z) { acc, value -> f(acc, value) }
+
+fun <A, B> ConsList<A>.foldLeft(z: B, f: (B, A) -> B): B {
+    tailrec fun loop(list: ConsList<A>, z: B): B = when (list) {
+        ConsList.Nil -> z
+        is ConsList.Cons -> loop(list.tail, f(z, list.head))
+    }
+    return loop(this, z)
+}
+
+fun <A, B> ConsList<A>.foldRight(z: B, f: (A, B) -> B): B {
+    fun loop(list: ConsList<A>, z: B): B = when (list) {
+        ConsList.Nil -> z
+        is ConsList.Cons -> f(list.head, loop(list.tail, z))
+    }
+    return loop(this, z)
 }
 
 fun <A> List<A>.toConsList(): ConsList<A> = foldRight(Nil, ::Cons)
-fun <A> ConsList<A>.toList(): List<A> {
-    val list = mutableListOf<A>()
-    fun loop(consList: ConsList<A>): List<A> = when (consList) {
-        Nil -> emptyList()
-        is Cons -> list.apply { add(consList.head) } + loop(consList.tail)
-    }
-    loop(this)
-    return list
-}
 
-fun <A> ConsList<A>.size(): Int {
-    fun loop(consList: ConsList<A>): Int = when (consList) {
-        Nil -> 0
-        is Cons -> 1 + loop(consList.tail)
-    }
-    return loop(this)
-}
+//mutating for efficiency
+fun <A> ConsList<A>.toList(): List<A> = foldLeft(mutableListOf()) { acc, value -> acc.add(value); acc }
 
-fun <A> ConsList<A>.reverse(): ConsList<A> {
-    tailrec fun loop(consList: ConsList<A>, acc: ConsList<A>): ConsList<A> = when (consList) {
-        is Nil -> acc
-        is Cons -> loop(consList.tail, Cons(consList.head, acc))
-    }
-    return loop(this, Nil)
-}
+fun <A> ConsList<A>.size(): Int = foldLeft(0) { acc, _ -> acc + 1 }
+
+fun <A> ConsList<A>.reverse(): ConsList<A> = foldLeft(nil()) { acc, value -> cons(value, acc) }
 
 fun <A> ConsList<A>.split(n: Int): Pair<ConsList<A>, ConsList<A>> {
 
     tailrec fun loop(left: ConsList<A>, right: ConsList<A>, count: Int): Pair<ConsList<A>, ConsList<A>> =
         when {
             count == 0 || right !is Cons -> Pair(left, right)
-            else -> loop(Cons(right.head, left), right.tail, count - 1)
+            else -> loop(cons(right.head, left), right.tail, count - 1)
         }
 
     return loop(Nil, this, n).let { (l, r) -> Pair(l.reverse(), r) }
