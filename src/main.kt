@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     print("Selection Sort") { selectionSort(numbers.copyOf()).contentToString() }
     print("Insertion Sort") { insertionSort(numbers.copyOf()).contentToString() }
     print("Insertion Sort Alt") { insertionSort2(numbers.copyOf().iterator()).asSequence().toList().toString() }
-    print("Merge Sort") { mergeSort(numbers.copyOf().toList().toConsList() ?: ConsList.Nil) }
+    print("Merge Sort") { mergeSort(numbers.copyOf().toList()) }
 
     print("Palindrome", { "RATER".isPalindrome() }, { "ROTOR".isPalindrome() })
     print("Power", { power(3, -2) }, { power(3, -1) }, { power(3, 0) }, { power(3, 1) }, { power(3, 2) })
