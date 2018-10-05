@@ -104,39 +104,68 @@ tailrec fun <A> helper(array: Array<A>, list: ZipperList<A>): Array<A> =
     }
 
 sealed class ConsList<out A> {
-    object Nil : ConsList<Nothing>()
-    class Cons<A>(val head: A, val tail: ConsList<A>) : ConsList<A>()
+    object Nil : ConsList<Nothing>() {
+        override fun toString(): String = "Nil"
+    }
+
+    class Cons<A>(val head: A, val tail: ConsList<A>) : ConsList<A>() {
+        override fun toString(): String {
+            fun loop(consList: ConsList<A>): String = when (consList) {
+                Nil -> "Nil"
+                is Cons -> "${consList.head}, " + loop(consList.tail)
+            }
+            return "[${loop(this)}]"
+        }
+    }
 }
 
-fun <A> Iterator<A>.toConsList(): ConsList<A>? {
-    val cons: ConsList<A> = this.asSequence().toList().foldRight(Nil, ::Cons)
-
-    return Nil
+fun <A> List<A>.toConsList(): ConsList<A>? = foldRight(Nil, ::Cons)
+fun <A> ConsList<A>.toList(): List<A>? {
+    val list = mutableListOf<A>()
+    fun loop(consList: ConsList<A>): List<A> = when (consList) {
+        Nil -> emptyList()
+        is Cons -> {
+            list.apply { add(consList.head) } + loop(consList.tail)
+        }
+    }
+    loop(this)
+    return list
 }
 
-fun mergeSort(list: List<Int>): List<Int> {
+fun <A> ConsList<A>.size(): Int {
+    fun loop(consList: ConsList<A>): Int = when (consList) {
+        Nil -> 0
+        is Cons -> 1 + loop(consList.tail)
+    }
+    return loop(this)
+}
 
-    fun List<Int>.split(i: Int): Pair<List<Int>, List<Int>> = Pair(this.slice(0 until i), this.slice(i until this.size))
+fun <A> ConsList<A>.split(n: Int): Pair<ConsList<A>, ConsList<A>> {
+    fun List<A>.split(i: Int): Pair<List<A>, List<A>> = Pair(this.slice(0 until i), this.slice(i until this.size))
+    return this.toList()?.split(n).let { Pair(it?.first?.toConsList() ?: Nil, it?.second?.toConsList() ?: Nil) }
+}
 
-    fun merge(left: List<Int>, right: List<Int>): List<Int> =
+
+fun mergeSort(list: ConsList<Int>): ConsList<Int> {
+
+    fun merge(left: ConsList<Int>, right: ConsList<Int>): ConsList<Int> =
         when {
-            left.isEmpty() -> right
-            right.isEmpty() -> left
+            left is Nil -> right
+            right is Nil -> left
             else -> {
-                val leftHead = left.first()
-                val rightHead = right.first()
-                if (leftHead < rightHead) leftHead + merge(left.take(1), right)
-                else rightHead + merge(left, right.take(1))
+                val leftHead = (left as Cons).head
+                val rightHead = (right as Cons).head
+                if (leftHead < rightHead) Cons(leftHead, merge(left.tail, right))
+                else Cons(rightHead, merge(left, right.tail))
             }
         }
 
-    fun sort(l: List<Int>): List<Int> {
-        val n = l.size / 2
-        return if (n == 0) list
+    fun sort(l: ConsList<Int>): ConsList<Int> {
+        val n = l.size() / 2
+        return if (n == 0) l
         else {
-            val (left, right) = list.split(n)
-            merge(mergeSort(left), mergeSort(right))
-
+            val (left, right) = l.split(n)
+            merge(sort(left), sort(right))
         }
     }
 
