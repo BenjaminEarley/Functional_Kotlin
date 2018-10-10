@@ -1,3 +1,5 @@
+import java.math.BigInteger
+
 fun String.isPalindrome(): Boolean =
     when {
         count() < 2 -> true
@@ -33,4 +35,12 @@ fun solveHanoi(size: Int, source: Tower, destination: Tower) {
         moveDisk(source, destination)
         solveHanoi(size - 1, tmp, destination)
     }
+}
+
+// Linear Fib
+fun linFib(n: Int): BigInteger {
+    val memo = mutableMapOf<Int, BigInteger>()
+    fun loop(n: Int): BigInteger =
+        if (n < 2) n.toBigInteger() else memo.getOrPut(n - 2) { loop(n - 2) } + memo.getOrPut(n - 1) { loop(n - 1) }
+    return loop(n)
 }

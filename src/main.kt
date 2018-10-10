@@ -42,14 +42,16 @@ fun main(args: Array<String>) {
     println("\nChallenges\n")
     print("Palindrome", { "RATER".isPalindrome() }, { "ROTOR".isPalindrome() })
     print("Power", { power(3, -2) }, { power(3, -1) }, { power(3, 0) }, { power(3, 1) }, { power(3, 2) })
+    print("Hanoi") { solveHanoi(1, Tower.LEFT, Tower.MIDDLE); "above" }
+    print("Fibonacci in Linear Time") { linFib(100) }
 }
 
 fun print(action: String, f: () -> Any) =
-    println("$action results in ${f()}")
+    println("$action results is ${f()}")
 
 
 fun print(action: String, vararg functions: () -> Any) =
-    println("$action results in: ${functions.fold("") { acc, f -> acc + "\n     " + f().toString() }}")
+    println("$action results is: ${functions.fold("") { acc, f -> acc + "\n     " + f().toString() }}")
 
 
 
