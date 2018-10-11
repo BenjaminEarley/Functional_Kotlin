@@ -29,8 +29,13 @@ fun main(args: Array<String>) {
 
     println("\nExercises 3\n")
     print("Tree Size") { tree.size() }
+    print("Tree Size With Fold") { tree.sizeViaFold() }
     print("Tree Max") { tree.max() }
+    print("Tree Max With Fold") { tree.maxViaFold() }
     print("Tree Depth") { tree.depth() }
+    print("Tree Depth") { tree.depthViaFold() }
+    print("Tree Map") { tree.map { it + 1 } }
+    print("Tree Map") { tree.mapViaHold { it + 1 } }
 
     println("\nAlgorithms\n")
     print("Binary Search") { binarySearch(primes.copyOf(), 73) }
@@ -47,11 +52,11 @@ fun main(args: Array<String>) {
 }
 
 fun print(action: String, f: () -> Any) =
-    println("$action results is ${f()}")
+    println("$action result is ${f()}")
 
 
 fun print(action: String, vararg functions: () -> Any) =
-    println("$action results is: ${functions.fold("") { acc, f -> acc + "\n     " + f().toString() }}")
+    println("$action results are: ${functions.fold("") { acc, f -> acc + "\n     " + f().toString() }}")
 
 
 
