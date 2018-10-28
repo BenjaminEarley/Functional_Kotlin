@@ -12,10 +12,10 @@ sealed class ConsList<out A> {
     class Cons<A> internal constructor(val head: A, val tail: ConsList<A>) : ConsList<A>() {
         override fun toString(): String = "[${this.foldLeft("") { acc, value -> "$acc$value, " }}Nil]"
     }
-
-    inline fun <A> nil(): ConsList<A> = ConsList.Nil
-    fun <A> cons(head: A, tail: ConsList<A>): ConsList<A> = ConsList.Cons(head, tail)
 }
+
+inline fun <A> nil(): ConsList<A> = ConsList.Nil
+fun <A> cons(head: A, tail: ConsList<A>): ConsList<A> = ConsList.Cons(head, tail)
 
 fun <A> Cons<A>.reduce(f: (A, A) -> A): A = tail.fold(this.head) { acc, value -> f(acc, value) }
 

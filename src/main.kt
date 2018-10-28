@@ -37,6 +37,10 @@ fun main(args: Array<String>) {
     print("Tree Map") { tree.map { it + 1 } }
     print("Tree Map") { tree.mapViaHold { it + 1 } }
 
+    println("\nExercises 4\n")
+    print("Sequence") { listOf(Some(4), Some(9), Some(3), Some(7)).toConsList().sequence() }
+    print("Sequence") { listOf(Some(4), Some(9), Some(3), None, Some(7)).toConsList().sequence() }
+
     println("\nAlgorithms\n")
     print("Binary Search") { binarySearch(primes.copyOf(), 73) }
     print("Selection Sort") { selectionSort(numbers.copyOf()).contentToString() }
