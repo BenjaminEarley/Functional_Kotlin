@@ -44,3 +44,10 @@ fun linFib(n: Int): BigInteger {
         if (n < 2) n.toBigInteger() else memo.getOrPut(n - 2) { loop(n - 2) } + memo.getOrPut(n - 1) { loop(n - 1) }
     return loop(n)
 }
+
+fun tailRecFactorial(n: Int): Int {
+    tailrec fun helper(nn: Int, result: Int): Int =
+        if (nn == 0) result
+        else helper(nn - 1, result * nn)
+    return helper(n, 1)
+}

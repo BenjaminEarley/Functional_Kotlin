@@ -53,6 +53,7 @@ fun main(args: Array<String>) {
     print("Power", { power(3, -2) }, { power(3, -1) }, { power(3, 0) }, { power(3, 1) }, { power(3, 2) })
     print("Hanoi") { solveHanoi(1, Tower.LEFT, Tower.MIDDLE); "above" }
     print("Fibonacci in Linear Time") { linFib(100) }
+    print("Factorial in Tail Position") { tailRecFactorial(8) }
 }
 
 fun print(action: String, f: () -> Any) =
